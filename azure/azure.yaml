@@ -1,0 +1,56 @@
+#hould spawn three containers here
+# 1. python backend
+# 2. java backend for SQL operations
+# 3. mysql database from the docker hub community
+# 4. service to expose all of the containers via a Load Balancer
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sqlbackend
+  labels:
+    app: sqlbackend
+spec:
+  containers:
+    - name: pythonbackend
+      image: zzrregistry-on.azurecr.io/ziruiz:v1
+      ports:
+       - name: http
+         containerPort: 6000
+    - name: javabackend
+      image: zzrregistry-on.azurecr.io/ziruizjava:v2
+      ports:
+       - name: http
+         containerPort: 8080
+    - name: mysqlserver
+      image: mysql:latest
+      ports:
+       - name: http
+         containerPort: 3306
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_DATABASE
+          value: p22_db
+
+  imagePullSecrets:
+    - name: mykey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sqlbackendservice
+spec:
+  type: LoadBalancer
+  selector:
+    app: sqlbackend
+  ports:
+    - name: db
+      port: 3306
+      targetPort: 3306
+    - name: db2
+      port: 80
+      targetPort: 6000
+    - name: db3
+      port: 8080
+      targetPort: 8080

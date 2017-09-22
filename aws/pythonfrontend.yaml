@@ -1,0 +1,28 @@
+#hould spawn three containers here
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: awsfrontendtest
+  labels:
+    app: awsfrontendtest
+spec:
+  containers:
+    - name: awsfrontendtest
+      image: 430415183117.dkr.ecr.us-east-1.amazonaws.com/ziruiztask4:v6
+      ports:
+       - name: http
+         containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: awsfrontendtest
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5000
+  selector:
+    app: awsfrontendtest
+  type: LoadBalancer
